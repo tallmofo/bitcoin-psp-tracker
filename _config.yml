@@ -1,0 +1,10 @@
+# Jekyll configuration for GitHub Pages
+title: Bitcoin PSP Tracker
+description: Real-time Bitcoin price tracker optimized for PSP displays
+
+# Theme
+theme: minima
+
+# GitHub Pages settings
+baseurl: "/bitcoin-psp-tracker"
+url: "https://tallmofo.github.io"
