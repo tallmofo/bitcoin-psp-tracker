@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=480, initial-scale=1.0">
+    <title>Bitcoin Price - PSP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 480px;
+            height: 272px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Courier New', monospace;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #fff;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .logo {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .price {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .change {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        
+        .positive {
+            color: #4ade80;
+        }
+        
+        .negative {
+            color: #f87171;
+        }
+        
+        .info {
+            font-size: 12px;
+            margin-top: 15px;
+            opacity: 0.8;
+        }
+        
+        .loading {
+            font-size: 20px;
+        }
+        
+        .error {
+            color: #fca5a5;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">BTC</div>
+        <div id="content">
+            <div class="loading">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        var lastPrice = null;
+
+        function fetchBitcoinPrice() {
+            fetch('https://data-api.coindesk.com/index/cc/v1/latest/tick?market=cadli&instruments=BTC-USD')
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var price = data.Data['BTC-USD'].VALUE;
+                    var formattedPrice = '$' + price.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    
+                    var changeHtml = '';
+                    if (lastPrice !== null) {
+                        var diff = price - lastPrice;
+                        var diffPercent = ((diff / lastPrice) * 100).toFixed(2);
+                        var changeClass = diff >= 0 ? 'positive' : 'negative';
+                        var arrow = diff >= 0 ? '▲' : '▼';
+                        changeHtml = '<div class="change ' + changeClass + '">' + arrow + ' ' + Math.abs(diffPercent) + '%</div>';
+                    }
+                    
+                    lastPrice = price;
+                    
+                    var now = new Date().toLocaleTimeString('en-US', { 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                    });
+                    
+                    document.getElementById('content').innerHTML = 
+                        '<div class="price">' + formattedPrice + '</div>' +
+                        changeHtml +
+                        '<div class="info">Bitcoin (BTC/USD)</div>' +
+                        '<div class="info">Updated: ' + now + '</div>';
+                })
+                .catch(function(error) {
+                    document.getElementById('content').innerHTML = 
+                        '<div class="error">Failed to load price</div>' +
+                        '<div class="info">Retrying in 10 minutes...</div>';
+                });
+        }
+
+        fetchBitcoinPrice();
+        setInterval(fetchBitcoinPrice, 600000);
+    </script>
+</body>
+</html>
