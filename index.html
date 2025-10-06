@@ -38,6 +38,7 @@
             font-weight: bold;
             margin: 15px 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #F7931A;
         }
         
         .change {
@@ -71,15 +72,13 @@
 </head>
 <body>
     <div class="container">
-        <div class="logo">BTC</div>
+        <div class="logo">₿ BTC</div>
         <div id="content">
             <div class="loading">Loading...</div>
         </div>
     </div>
-
     <script>
         var lastPrice = null;
-
         function fetchBitcoinPrice() {
             fetch('https://data-api.coindesk.com/index/cc/v1/latest/tick?market=cadli&instruments=BTC-USD')
                 .then(function(response) {
@@ -120,7 +119,6 @@
                         '<div class="info">Retrying in 10 minutes...</div>';
                 });
         }
-
         fetchBitcoinPrice();
         setInterval(fetchBitcoinPrice, 600000);
     </script>
